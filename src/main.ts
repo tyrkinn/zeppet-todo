@@ -1,33 +1,41 @@
 import './style.css';
-import { select, observe } from '@zeppet/core';
-import { addClass, bindInput, listIn, setText, addHandler } from '@zeppet/actions';
+import { observe, compose, selectOne, use } from '@zeppet/core';
+import { addClass, bindInput, listIn, setText, listen } from '@zeppet/actions';
 import { useToast } from './toast';
 
 const todosObs = observe(['Drink coffee', 'Shab smoke']);
 const inputText = observe('');
-
-const toast = useToast(select("#toasts")!, 2000)
+const toast = useToast(selectOne("#toasts")!, 2000)
 
 const addTodo = () => {
-  todosObs.mutate(prev => [...prev, inputText.getValue()]);
+  const inputValue = inputText.getValue().trim();
+  if (inputValue.length === 0) {
+    toast('Input field cannot be empty');
+    return;
+  }
+  todosObs.mutate(prev => [...prev, inputValue]);
   inputText.mutate(() => '');
   toast('Todo added');
 }
 
-select("#list")!.use(
+use(
+  selectOne("#list")!,
   addClass('flex', 'flex-col', 'gap-2'),
   listIn(todosObs, (item, listItem) =>
-    listItem.use(
+    compose(
       setText(item),
       addClass('w-full', 'bg-gray-900', 'text-gray-200', 'rounded-md', 'py-4', 'px-3')
-    )),
+    )(listItem),
+  )
 )
 
-select<HTMLInputElement>('#input')!.use(
+use(
+  selectOne<HTMLInputElement>('#input')!,
   bindInput(inputText),
-  addHandler('keydown', (e) => e.key === 'Enter' && addTodo())
+  listen('keydown', (e) => e.key === 'Enter' && addTodo())
 )
 
-select('#addBtn')!.use(
-  addHandler('click', addTodo)
+use(
+  selectOne('#addBtn')!,
+  listen('click', addTodo)
 )

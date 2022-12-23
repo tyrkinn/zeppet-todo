@@ -16,8 +16,8 @@
     "vite": "^4.0.0"
   },
   "dependencies": {
-    "@zeppet/actions": "^0.0.5",
-    "@zeppet/core": "^0.0.5",
+    "@zeppet/actions": "^1.0.1",
+    "@zeppet/core": "^1.0.1",
     "daisyui": "^2.46.0"
   }
 }

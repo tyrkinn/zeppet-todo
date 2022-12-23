@@ -1,10 +1,7 @@
-import type { Select, Action } from "@zeppet/core";
+import type { Action } from "@zeppet/core";
 
-const isNodeList = <T extends HTMLElement>(element: T | NodeListOf<T>): element is NodeListOf<T> => Reflect.has(element, 'length');
-
-export const addChild = <T extends HTMLElement>(select: Select<T>): Action<T> => element => {
-  if (isNodeList(select.node)) { return element }
-  element.appendChild(select.node)
+export const addChild = <T extends HTMLElement>(child: T): Action<T> => element => {
+  element.appendChild(child);
   return element;
 }
 

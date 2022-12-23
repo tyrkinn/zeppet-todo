@@ -1,16 +1,15 @@
 import { addClass, setText } from "@zeppet/actions";
-import { compose, Select, selectNode } from "@zeppet/core";
+import { compose, use } from "@zeppet/core";
 import { addChild, removeWithDelay, useTimeout } from "./shared";
 
-export const useToast = <T extends HTMLElement>(toastContainerSelect: Select<T>, delay: number) => (text: string) => {
-  const alert = selectNode<T>(document.createElement('div') as unknown as T).use(
+export const useToast = <T extends HTMLElement>(toastContainerSelect: T, delay: number) => (text: string) => {
+  const alert = use<HTMLElement>(
+    document.createElement('div'),
     addClass('alert', 'shadow-lg', 'alert-success'),
     setText(text)
   );
-  toastContainerSelect.use(addChild(alert));
-  return alert.use(
-    toastAction(delay)
-  );
+  addChild(alert)(toastContainerSelect)
+  return toastAction(delay)(alert)
 }
 
 export const toastAction = (delay: number) => {
